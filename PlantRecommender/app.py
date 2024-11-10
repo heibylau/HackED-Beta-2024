@@ -1,18 +1,20 @@
 from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO, emit
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-
+import random
+from threading import Thread
+import time
 
 # Load environment variables from .env file
 load_dotenv()
 
-
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 '''
 TEST VALUES:
@@ -63,6 +65,30 @@ plants = [
     {"name": "Cactus", "humidity_range": (20, 40), "temp_range": (10, 30), "icon": "cactus.jpg"}
 ]
 
+# Function to simulate temperature and humidity data
+def simulate_data():
+    temperature = 20.0
+    humidity = 50.0
+    while True:
+        # Simulate random temperature and humidity changes
+        temperature_change = round(random.uniform(-0.7, 0.7), 1)
+        humidity_change = round(random.uniform(-0.7, 0.7), 1)
+
+        temperature = round(temperature + temperature_change, 1)
+        humidity = round(humidity + humidity_change, 1)
+
+        # Emit the new data to the client
+        socketio.emit('update_data', {'temperature': temperature, 'humidity': humidity})
+        print("Data updated")
+
+        # Use socketio.sleep instead of time.sleep to prevent blocking
+        socketio.sleep(5)
+
+# Thread to run the data simulation in the background
+def start_simulation():
+    thread = Thread(target=simulate_data)
+    thread.daemon = True
+    thread.start()
 
 # Function to recommend plants based on temperature and humidity
 def recommend_plants(avg_temp, avg_humidity):
@@ -75,10 +101,8 @@ def recommend_plants(avg_temp, avg_humidity):
         closeness_score = temp_diff + humidity_diff
         plant_scores.append((plant, closeness_score))
 
-
     sorted_plants = sorted(plant_scores, key=lambda x: x[1])
     return [plant[0] for plant in sorted_plants[:3]]
-
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -92,7 +116,6 @@ def index():
             recommendations = ["Please enter valid numerical values for temperature and humidity."]
     return render_template("index.html", recommendations=recommendations)
 
-
 @app.route('/chat', methods=['POST'])
 def chat():
     user_input = request.json.get('user_input')
@@ -102,7 +125,7 @@ def chat():
         return jsonify({'error': 'No input or plant selected'}), 400
 
     try:
-        prompt = f"You are {plant_name}, a friendly plant, here to answer questions about {plant_name} in max 40 words max. Be original and use a distinct personality based on your plant type."
+        prompt = f"You are {plant_name}, a friendly plant, here to answer questions about {plant_name} in max 40 words. Be original and use a distinct personality based on your plant type."
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "system", "content": prompt}, {"role": "user", "content": user_input}]
@@ -112,9 +135,7 @@ def chat():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
+    # Start the background simulation before running the app
+    start_simulation()
+    socketio.run(app, debug=True)
