@@ -1,20 +1,51 @@
-/* Aesthetic base styling */
+* {
+    font-family: "Poppins", sans-serif;
+}
+
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: "Poppins", sans-serif;
     color: #333;
     text-align: center;
     margin: 50px;
     background-color: #f9f9f9;
 }
 
-/* Form styling with centered alignment */
+/* Flex container for the form and recommendations */
+.main-container {
+    display: flex;
+    justify-content: space-between; /* Space out the form and recommendations */
+    align-items: flex-start; /* Align items to the top */
+    gap: 30px; /* Optional: Adds space between the form and recommendations */
+}
+
 form {
-    margin: 20px auto; /* Centers the form horizontally */
     max-width: 400px; /* Limits the width */
     padding: 20px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centers form content */
+    flex: 1; /* Ensures the form takes up available space */
+}
+
+h1 {
+    font-family: 'Abril Fatface', cursive;
+    font-size: 2.5em;
+    color: #333;
+}
+
+.poppins-regular {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body, .poppins-regular {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    margin: 50px;
+    text-align: center;
 }
 
 /* Label styling */
@@ -28,12 +59,15 @@ label {
 
 /* Input and button styling */
 input, button {
-    width: 100%;
+    width: 90%; /* Adjusts the width so it's not flush with the edges */
+    max-width: 350px; /* Limits the max width to prevent excessive stretching */
     font-size: 16px;
     padding: 10px;
+    margin: 5px auto; /* Centers the element horizontally */
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-top: 5px;
+    box-sizing: border-box; /* Ensures padding/border are included in width */
+    display: block; /* Ensures the input/button takes up full width */
 }
 
 button {
@@ -47,20 +81,6 @@ button:hover {
     background-color: #555;
 }
 
-/* Recommendation panel styling */
-.plant-panel {
-    display: inline-block;
-    max-width: 300px;
-    padding: 15px;
-    margin: 10px;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: left;
-    font-size: 16px;
-}
-
 .plant-name {
     font-size: 18px;
     font-weight: bold;
@@ -71,6 +91,111 @@ button:hover {
 .plant-details {
     color: var(--secondary-color);
     font-size: 14px;
+}
+
+/* Adjust the title and icon styles */
+.title-container {
+    display: flex;
+    align-items: center;
+}
+
+.title-icon {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 10px;
+}
+
+/* Styling for the chat modal */
+#chat-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    overflow: auto;
+}
+#chat-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    width: 60%;
+    border-radius: 10px;
+    max-width: 600px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+}
+#messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Plant recommendation section styles */
+#results {
+    flex: 1; /* Makes this section take up the available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the top */
+    align-items: flex-start; /* Align items to the left */
+    width: 100%;
+}
+
+/* Container for plant panels in a horizontal row */
+.recommendations {
+    display: flex;
+    justify-content: flex-start; /* Align the panels to the left */
+    flex-wrap: wrap; /* Allows the panels to wrap if there’s not enough space */
+    gap: 20px; /* Optional: space between the panels */
+    width: 100%; /* Ensures recommendations take full available width */
+}
+
+.user-message, .bot-message {
+    margin-bottom: 15px;
+}
+.user-message {
+    text-align: right;
+    font-weight: bold;
+}
+.bot-message {
+    text-align: left;
+    color: green;
+}
+
+/* Adjusting the plant icon size and centering */
+.plant-icon {
+    width: 250px; /* Larger icon size */
+    height: 250px; /* Ensure it’s a square image */
+    object-fit: cover; /* Ensures the image fits within the box without stretching */
+    margin-bottom: 10px; /* Spacing between the icon and the plant name */
+    border: 2px solid #ddd;
+    border-radius: 50%; 
+}
+
+.plant-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically center the content inside the panel */
+    align-items: center; /* Horizontally center the content inside the panel */
+    width: 350px; /* Width of each panel */
+    margin: 10px; /* Space between panels */
+    text-align: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.plant-name {
+    font-weight: bold;
+}
+
+.plant-details {
+    font-size: 0.9em;
+    color: #555;
 }
 
 /* Ellipsis typing animation */
@@ -98,7 +223,6 @@ button:hover {
     0%, 100% { opacity: 0; }
     50% { opacity: 1; }
 }
-
 
 /* Result styling */
 #results {
