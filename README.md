@@ -28,4 +28,4 @@ Our project features a sensor that tracks both temperature and humidity levels i
 ## Opportunities for improvement
 - Integrate both weather buddy and plant buddy together into a single webpage
 - Make the hardware into a smaller scale so we can 3D print a case for the sensor
-- Add a LCD Display
+- Add a LCD Display.
