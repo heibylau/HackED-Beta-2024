@@ -1,0 +1,115 @@
+/* Aesthetic base styling */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    text-align: center;
+    margin: 50px;
+    background-color: #f9f9f9;
+}
+
+/* Form styling with centered alignment */
+form {
+    margin: 20px auto; /* Centers the form horizontally */
+    max-width: 400px; /* Limits the width */
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Label styling */
+label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+/* Input and button styling */
+input, button {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+button {
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+/* Recommendation panel styling */
+.plant-panel {
+    display: inline-block;
+    max-width: 300px;
+    padding: 15px;
+    margin: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    font-size: 16px;
+}
+
+.plant-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.plant-details {
+    color: var(--secondary-color);
+    font-size: 14px;
+}
+
+/* Ellipsis typing animation */
+#typing-indicator {
+    text-align: left;
+    color: green;
+    font-size: 1.5em;
+    margin-top: 10px;
+}
+
+.dot {
+    animation: blink 1.5s infinite;
+    display: inline-block;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+
+/* Result styling */
+#results {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Configurable color variables */
+:root {
+    --primary-color: #333; /* Configurable primary color */
+    --secondary-color: #555; /* Configurable secondary color */
+    --background-color: #f9f9f9; /* Configurable background */
+}
