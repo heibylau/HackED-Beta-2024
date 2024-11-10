@@ -1,7 +1,7 @@
 # HackED Beta 2024-Weather Buddy
 Group members: Heiby Lau, Arthur Witte, Ruslan Kurbanov
 ## Inspiration
-The need for comfortable and healthy indoor spaces is essential, not only for people but also for indoor plants. Our goal was to create an easy way to monitor temperature and humidity, helping people optimize their environment and support plant health.
+A group member's room is always really dry in winter and wanted something to detect the humidity in their room. Another group member loves plants and originally planned to use the humidity sensor to record humidity of their greenhouse. We therefore combined both ideas and wanted to create a portable temperature and humidity sensor for users to use in any indoor space they want.
 
 ## Project overview
 Our project features a sensor that tracks both temperature and humidity levels in real-time. The sensor is connected to a microcontroller, which transmits the collected data to AWS for storage and further analysis. 
