@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Recommender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Styling for the chat modal */
+        #chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            overflow: auto;
+        }
+        #chat-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 60%;
+            border-radius: 10px;
+            max-width: 600px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+        }
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #results {
+            display: flex;
+            justify-content: center; /* Center the recommendations container horizontally */
+            align-items: center; /* Optionally center vertically if you want */
+            flex-direction: column;
+            width: 100%;
+        }
+        /* Container for plant panels in a horizontal row */
+        .recommendations {
+            display: flex;
+            justify-content: center; /* Center the plant panels horizontally */
+            align-items: flex-start; /* Align the panels to the top */
+            flex-wrap: wrap; /* Allows the panels to wrap if there’s not enough space */
+            gap: 20px; /* Optional: space between the panels */
+        }
+        .user-message, .bot-message {
+            margin-bottom: 15px;
+        }
+        .user-message {
+            text-align: right;
+            font-weight: bold;
+        }
+        .bot-message {
+            text-align: left;
+            color: green;
+        }
+        /* Adjusting the plant icon size and centering */
+        .plant-icon {
+            width: 100px; /* Larger icon size */
+            height: 100px; /* Ensure it’s a square image */
+            object-fit: cover; /* Ensures the image fits within the box without stretching */
+            margin-bottom: 10px; /* Spacing between the icon and the plant name */
+        }
+        .plant-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertically center the content inside the panel */
+            align-items: center; /* Horizontally center the content inside the panel */
+            width: 120px; /* Width of each panel */
+            margin: 10px; /* Space between panels */
+            text-align: center;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .plant-name {
+            font-weight: bold;
+        }
+        .plant-details {
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Plant Buddy</h1>
+
+    <!-- Plant Recommendation Form -->
+    <form method="POST">
+        <label for="temperature">Average Temperature (°C):</label>
+        <input type="text" id="temperature" name="temperature" required>
+        <br><br>
+
+        <label for="humidity">Average Humidity (%):</label>
+        <input type="text" id="humidity" name="humidity" required>
+        <br><br>
+
+        <button type="submit">Recommend Plants</button>
+    </form>
+
+    <div id="results">
+        <h2>Top 3 Recommended Plants:</h2>
+        <div class="recommendations">
+            {% for plant in recommendations %}
+            <div class="plant-panel" onclick="openChatModal('{{ plant.name }}')">
+                <img src="{{ url_for('static', filename='icons/' + plant.icon) }}" alt="{{ plant.name }}" class="plant-icon">
+                <div class="plant-name">{{ plant.name }}</div>
+                <div class="plant-details">
+                    Ideal temperature: {{ plant.temp_range[0] }}°C - {{ plant.temp_range[1] }}°C<br>
+                    Ideal humidity: {{ plant.humidity_range[0] }}% - {{ plant.humidity_range[1] }}%
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chat-modal">
+        <div id="chat-content">
+            <span onclick="closeChatModal()" style="cursor:pointer;float:right;">&times;</span>
+            <h2 id="chat-title"></h2>
+            <div id="typing-indicator" style="display: none;">
+                <span class="dot">•</span>
+                <span class="dot">•</span>
+                <span class="dot">•</span>
+            </div>
+            <div id="messages"></div>
+            <input type="text" id="user-input" placeholder="Ask the plant..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPlant = "";
+
+        // Open the chat modal and set the plant's name
+        function openChatModal(plantName) {
+            currentPlant = plantName;
+            document.getElementById("chat-title").textContent = `Chat with ${plantName}`;
+            document.getElementById("chat-modal").style.display = "block";
+            document.getElementById("messages").innerHTML = "";  // Clear previous messages
+        }
+
+        // Close the chat modal
+        function closeChatModal() {
+            document.getElementById("chat-modal").style.display = "none";
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            if (!userInput.trim()) return;
+
+            displayMessage(userInput, 'user');
+            document.getElementById("user-input").value = '';
+            
+            // Show typing indicator
+            document.getElementById("typing-indicator").style.display = "block";
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_input: userInput, plant_name: currentPlant })
+                });
+                const data = await response.json();
+
+                // Hide typing indicator
+                document.getElementById("typing-indicator").style.display = "none";
+
+                // Display bot's response
+                displayMessage(data.response || data.error, 'bot');
+            } catch (error) {
+                document.getElementById("typing-indicator").style.display = "none";
+                displayMessage("Error: Could not load response.", 'bot');
+            }
+        }
+
+
+
+        // Display a message in the chat
+        function displayMessage(message, sender) {
+            const messagesDiv = document.getElementById("messages");
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add(sender + "-message");
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>
