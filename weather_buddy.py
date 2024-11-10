@@ -5,7 +5,7 @@ import pandas as pd
 from datetime import datetime
 import boto3
 
-# Fetch data from DynamoDB
+# Fetch data from AWS Timestream
 def fetch_data():
     client = boto3.client('timestream-query')
 
